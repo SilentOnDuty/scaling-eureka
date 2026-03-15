@@ -1,15 +1,12 @@
--- sendit.lua — quick rednet broadcaster / tester
--- Type target ID (or 'b' for broadcast), then message
-
 term.clear()
 term.setCursorPos(1,1)
 term.setTextColor(colors.lime)
-print("SENDIT v1 — rednet broadcaster")
+print("SENDIT — rednet broadcaster")
 term.setTextColor(colors.white)
-print("Target: number = specific ID, 'b' = broadcast")
+print("Target: number = ID, 'b' = broadcast")
 print("Type 'exit' to quit\n")
 
-rednet.open("back")  -- change side if needed
+rednet.open("back")
 
 while true do
     term.setCursorPos(1, term.getSize()-2)
@@ -17,25 +14,18 @@ while true do
     term.setTextColor(colors.lime)
     write("Target: ")
     term.setTextColor(colors.white)
-    local targetInput = read():lower()
+    local t = read():lower()
 
-    if targetInput == "exit" then
+    if t == "exit" then
         print("Exiting...")
         break
     end
 
-    local target
-    if targetInput == "b" then
-        target = nil  -- broadcast
-        print("Broadcast mode selected")
-    else
-        target = tonumber(targetInput)
-        if not target then
-            print("Invalid target — use number or 'b'")
-            sleep(1)
-            goto continue
-        end
-        print("Sending to #" .. target)
+    local target = t == "b" and nil or tonumber(t)
+    if not target and t ~= "b" then
+        print("Invalid — use number or 'b'")
+        sleep(0.8)
+        goto next
     end
 
     term.setCursorPos(1, term.getSize()-1)
@@ -43,28 +33,20 @@ while true do
     term.setTextColor(colors.lime)
     write("Message: ")
     term.setTextColor(colors.white)
-    local message = read()
+    local msg = read()
 
-    if message == "" then
-        print("Empty message — skipped")
-        goto continue
-    end
+    if msg == "" then goto next end
 
-    -- Optional: wrap in table for structure
-    local payload = {
-        from = os.getComputerID(),
-        text = message,
-        time = os.date("%H:%M:%S")
-    }
+    local payload = {from=os.getComputerID(), text=msg, time=os.date("%H:%M:%S")}
 
     if target then
         rednet.send(target, payload)
-        print("Sent to #" .. target)
+        print("Sent to #"..target)
     else
         rednet.broadcast(payload)
-        print("Broadcasted to everyone")
+        print("Broadcasted")
     end
 
-    ::continue::
+    ::next::
     sleep(0.3)
 end
