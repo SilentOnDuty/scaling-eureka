@@ -12,7 +12,7 @@ term.setTextColor(colors.gray)
 print("P = pause   S = save current   R = replay last   L = list slots")
 print("Q = quit    F = toggle filter\n")
 
-rednet.open(peripheral.find("modem").getNameLocal() or "back")
+rednet.open("back")  -- change side if needed
 
 local paused = false
 local currentMsg, currentSender, currentDist, currentProtocol = nil, nil, nil, nil
