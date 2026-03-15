@@ -1,7 +1,6 @@
--- Modern RedNet Sniffer v2026 (inspired by original 60ThENGY)
--- Pocket & desktop friendly, with save slots, replay, logging
 
-local VERSION = "2026 edition"
+
+local VERSION = "2026"
 local LOG_FILE = "sniff_log.txt"
 
 term.clear()
@@ -12,7 +11,7 @@ term.setTextColor(colors.gray)
 print("P = pause   S = save current   R = replay last   L = list slots")
 print("Q = quit    F = toggle filter\n")
 
-rednet.open("back")  -- change side if needed
+rednet.open("back")
 
 local paused = false
 local currentMsg, currentSender, currentDist, currentProtocol = nil, nil, nil, nil
@@ -78,7 +77,7 @@ while true do
         currentSender = replyChannel
         currentMsg = message
         currentDist = distance
-        currentProtocol = nil -- can be added if protocol is sent
+        currentProtocol = nil -- (can be added if protocol is sent)
 
         logPacket(replyChannel, distance, nil, message)
         drawUI()
@@ -92,7 +91,7 @@ while true do
             print("Exiting...")
             break
         elseif key == keys.s and currentMsg then
-            -- Save current to next free slot
+            -- (Save current to next free slot)
             for i=0,15 do
                 if not saved[i] then
                     saved[i] = {sender=currentSender, dist=currentDist, msg=currentMsg}
@@ -102,7 +101,7 @@ while true do
                 end
             end
         elseif key == keys.r and currentMsg then
-            -- Replay last seen message
+           
             print("Replaying last packet to broadcast...")
             local copy = textutils.unserialize(textutils.serialize(currentMsg)) -- deep copy
             if copy.nMessageID then copy.nMessageID = math.random(1, 2147483647) end
@@ -119,7 +118,7 @@ while true do
 
     elseif event == "mouse_click" then
         local button, x, y = p1, p2, p3
-        if y == 19 and x >= 1 and x <= 48 then  -- slot bar
+        if y == 19 and x >= 1 and x <= 48 then 
             local slot = math.floor((x-1)/3)
             if saved[slot] then
                 currentSender = saved[slot].sender
